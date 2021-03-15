@@ -1,16 +1,16 @@
-import { HmacSHA1 } from "crypto-js";
+import { HmacSHA1 } from 'crypto-js';
 
 export const x_app_id = 1355;
 export const x_sign_version = 2;
-export const x_sign_key = "dd49a835-56e7-4a0f-95b5-efd51ea5397f";
-export const x_api_version = "3.0.66"; //   "x-api-version": "3.0.66",
+export const x_sign_key = 'dd49a835-56e7-4a0f-95b5-efd51ea5397f';
+export const x_api_version = '3.0.66'; //   "x-api-version": "3.0.66",
 export const appBuild = 528;
-export const appVersion = "5.0.0";
+export const appVersion = '5.0.0';
 
-export const pkgName = "com.zhihu.android";
+export const pkgName = 'com.zhihu.android';
 export const bundleId = pkgName
 
-export const regDevice = async (req: Request) => {
+export const regDevice = async () => {
 
 
     // @Key(value="app_build") public String appBuild;
@@ -52,55 +52,127 @@ export const regDevice = async (req: Request) => {
 
     let phoneSN = Array.prototype.map.call(new TextEncoder().encode(Math.random().toString(36)), x => ('00' + x.toString(16)).slice(-2)).join('').slice(-16);
 
-    const payload = `app_build=${appBuild}&app_version=${appVersion}&bt_ck=${bluetoothCheck}&bundle_id=${bundleId}&cp_ct=${cpuCount}&cp_fq=${cpuFrequency}&cp_tp=ARMv7+Processor+rev+0+%28v7l%29&cp_us=${cpuUsage}&d_n=PIXEL+2+XL&fr_mem=${freeMemory}&fr_st=${freeStorage}&mc_ad=02%3A00%3A00%3A00%3A00%3A00&mcc&nt_st=1&ph_br=google&ph_md=PIXEL+2+XL&ph_os=Android+7.1.2&ph_sn=${phoneSN}&pvd_nm&tt_mem=40&tt_st=12853&tz_of=28800`;
 
+    // const payload = `app_build=${appBuild}&app_version=${appVersion}&bt_ck=${bluetoothCheck}&bundle_id=${bundleId}&cp_ct=${cpuCount}&cp_fq=${cpuFrequency}&cp_tp=ARMv7+Processor+rev+0+%28v7l%29&cp_us=${cpuUsage}&d_n=PIXEL+2+XL&fr_mem=${freeMemory}&fr_st=${freeStorage}&mc_ad=02%3A00%3A00%3A00%3A00%3A00&mcc&nt_st=1&ph_br=google&ph_md=PIXEL+2+XL&ph_os=Android+7.1.2&ph_sn=${phoneSN}&pvd_nm&tt_mem=40&tt_st=12853&tz_of=28800`;
 
-    const ts = "" + Math.floor(+new Date() / 1000);
+    let searchParams = new URLSearchParams('');
+    searchParams.set('app_build', '' + appBuild);
+    searchParams.set('app_version', '' + appVersion);
+    searchParams.set('bt_ck', '' + bluetoothCheck);
+    searchParams.set('bundle_id', '' + bundleId);
+    searchParams.set('cp_ct', '' + cpuCount);
+    searchParams.set('cp_fq', '' + cpuFrequency);
+    searchParams.set('cp_tp', 'ARMv7 Processor rev 0 (v7l)');
+    searchParams.set('cp_us', '' + cpuUsage);
+    searchParams.set('d_n', 'PIXEL 2 XL');
+    searchParams.set('fr_mem', '' + freeMemory);
+    searchParams.set('fr_st', '' + freeStorage);
+    searchParams.set('mc_ad', '02:00:00:00:00:00');
+    searchParams.set('mcc', '');
+    searchParams.set('nt_st', '1');
+    searchParams.set('ph_br', 'google');
+    searchParams.set('ph_md', 'PIXEL 2 XL');
+    searchParams.set('ph_os', 'Android 7.1.2');
+    searchParams.set('ph_sn', phoneSN);
+    searchParams.set('pvd_nm', '');
+    searchParams.set('tt_mem', '' + 40);
+    searchParams.set('tt_st', '' + 12853);
+    searchParams.set('tz_of', '' + 28800);
 
-    const sign = HmacSHA1("" + x_app_id + x_sign_version + payload + ts, x_sign_key).toString()
+    const payload = searchParams.toString();
+
+    // Mozilla/5.0 (Linux; Android 7.1.2; PIXEL 2 XL Build/NOF26V; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/72.0.3626.121 Mobile Safari/537.36
+    // Mozilla/5.0 (Linux; Android 10; Pixel Build/QP1A.190711.019; wv) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Mobile Safari/537.36
+    // Mozilla/5.0 (Linux; Android 8.1.0; Pixel Build/OPM4.171019.021.P1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Mobile Safari/537.36
+    // Mozilla/5.0 (Linux; Android 7.1.1; Pixel Build/NOF26V) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Mobile Safari/537.36
+    // Mozilla/5.0 (Linux; Android 8.1.0; Pixel Build/OPM1.171019.021) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.109 Mobile Safari/537.36
+    // Mozilla/5.0 (Linux; Android 9; Pixel Build/PPR2.180905.006) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Mobile Safari/537.36
+    // Mozilla/5.0 (Linux; Android 10; Pixel Build/QP1A.191005.007.A3; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/80.0.3987.162 Mobile Safari/537.36
+    // Mozilla/5.0 (Linux; Android 10; Pixel Build/QP1A.191005.007.A3; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/80.0.3987.149 Mobile Safari/537.36
+    // Mozilla/5.0 (Linux; Android 8.0.0; Pixel Build/OPR6.170623.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.116 Mobile Safari/537.36
+    // Mozilla/5.0 (Linux; Android 10; Pixel Build/QP1A.191005.007.A3; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/74.0.3729.186 Mobile Safari/537.36
+    // Mozilla/5.0 (Linux; Android 8.0.0; Pixel Build/OPR3.170623.008) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Mobile Safari/537.36
+    // Mozilla/5.0 (Linux; Android 9; Pixel Build/PQ2A.190405.003; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/74.0.3729.136 Mobile Safari/537.36
+    // Mozilla/5.0 (Linux; Android 8.0.0; Pixel Build/OPR3.170623.013) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Mobile Safari/537.36
+    // Mozilla/5.0 (Linux; Android 8.0.0; Pixel Build/OPR6.170623.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.125 Mobile Safari/537.36
+
+    const ua = 'Mozilla/5.0 (Linux; Android 7.1.2; PIXEL 2 XL Build/NOF26V; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/72.0.3626.121 Mobile Safari/537.36';
+
+    const ts = '' + Math.floor(+new Date() / 1000);
+
+    const sign = HmacSHA1('' + x_app_id + x_sign_version + payload + ts, x_sign_key).toString();
+
 
     try {
-        let res = await fetch("https://appcloud.zhihu.com/v1/device", {
+        let res = await fetch('https://appcloud.zhihu.com/v1/device', {
 
-            method: "POST",
+            method: 'POST',
             headers: {
-                // Mozilla/5.0 (Linux; Android 7.1.2; PIXEL 2 XL Build/NOF26V; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/72.0.3626.121 Mobile Safari/537.36
-                // Mozilla/5.0 (Linux; Android 10; Pixel Build/QP1A.190711.019; wv) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Mobile Safari/537.36
-                // Mozilla/5.0 (Linux; Android 8.1.0; Pixel Build/OPM4.171019.021.P1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Mobile Safari/537.36
-                // Mozilla/5.0 (Linux; Android 7.1.1; Pixel Build/NOF26V) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Mobile Safari/537.36
-                // Mozilla/5.0 (Linux; Android 8.1.0; Pixel Build/OPM1.171019.021) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.109 Mobile Safari/537.36
-                // Mozilla/5.0 (Linux; Android 9; Pixel Build/PPR2.180905.006) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Mobile Safari/537.36
-                // Mozilla/5.0 (Linux; Android 10; Pixel Build/QP1A.191005.007.A3; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/80.0.3987.162 Mobile Safari/537.36
-                // Mozilla/5.0 (Linux; Android 10; Pixel Build/QP1A.191005.007.A3; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/80.0.3987.149 Mobile Safari/537.36
-                // Mozilla/5.0 (Linux; Android 8.0.0; Pixel Build/OPR6.170623.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.116 Mobile Safari/537.36
-                // Mozilla/5.0 (Linux; Android 10; Pixel Build/QP1A.191005.007.A3; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/74.0.3729.186 Mobile Safari/537.36
-                // Mozilla/5.0 (Linux; Android 8.0.0; Pixel Build/OPR3.170623.008) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Mobile Safari/537.36
-                // Mozilla/5.0 (Linux; Android 9; Pixel Build/PQ2A.190405.003; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/74.0.3729.136 Mobile Safari/537.36
-                // Mozilla/5.0 (Linux; Android 8.0.0; Pixel Build/OPR3.170623.013) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.84 Mobile Safari/537.36
-                // Mozilla/5.0 (Linux; Android 8.0.0; Pixel Build/OPR6.170623.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.125 Mobile Safari/537.36
 
-                "User-Agent": "Mozilla/5.0 (Linux; Android 7.1.2; PIXEL 2 XL Build/NOF26V; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/72.0.3626.121 Mobile Safari/537.36",
-                "x-app-id": "" + x_app_id,
-                "x-req-ts": ts,
-                "x-sign-version": "" + x_sign_version,// "2",
-                "x-req-signature": sign,
-                "Content-Type": "application/x-www-form-urlencoded",
-                "Connection": "Keep-Alive",
+                'User-Agent': ua,
+                'x-app-id': '' + x_app_id,
+                'x-req-ts': ts,
+                'x-sign-version': '' + x_sign_version,// '2',
+                'x-req-signature': sign,
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Connection': 'Keep-Alive',
             },
             body: payload,
 
-        }).then(resp => {
-            return resp.json();
-        })
+        }).then(r => {
+            return r.json();
+        });
 
-        return new Response(JSON.stringify({ success: 'true', data: { "sn": phoneSN, udid: res.udid } }), {
-            headers: { 'Content-Type': 'application/json' },
-        })
+        return { sn: phoneSN, udid: res.udid, ua: ua };
     } catch (error) {
-        return new Response(JSON.stringify(error), {
-            headers: { 'Content-Type': 'application/json' },
-            status: 500,
-        })
+        return { error: error };
+    }
+
+}
+
+
+
+export const regToken = async (data: any) => {
+
+    try {
+        const payload = `source=${pkgName}`;
+
+        let headers = {
+            'x-api-version': x_api_version,
+            'x-app-version': appVersion,
+            'x-app-build': 'release',
+            'x-network-type': 'WiFi',
+            'x-udid': data.udid,
+            "x-app-za": `OS=Android&Release=7.1.2&Model=PIXEL+2+XL&VersionName=${appVersion}&VersionCode=${appBuild}&Width=1080&Height=1776&Installer=%E8%B1%8C%E8%B1%86%E8%8D%9A&WebView=44.0.2403.117`,
+            'User-Agent': data.ua,
+        };
+        let res = await fetch("https://api.zhihu.com/guests/token", {
+
+            method: "POST",
+            headers: {
+                ...headers,
+                'x-app-id': '' + x_app_id,
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Connection': 'Keep-Alive',
+            },
+            body: payload,
+
+        }).then(r => {
+            return r.json();
+        });
+
+        return {
+            access_token: res.access_token,
+            // sn: data.sn,
+            // udid: data.udid,
+            // ua: data.ua,
+            headers: {
+                ...headers,
+                'Authorization': `Bearer ${res.access_token}`,
+            },
+        };
+    } catch (error) {
+        return { error: error, data };
     }
 
 }
