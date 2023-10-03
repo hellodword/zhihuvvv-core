@@ -1,17 +1,19 @@
-import { HmacSHA1 } from 'crypto-js';
+import { HmacSHA1 } from '../utils/crypto';
+import { Device, TokenResponse, DeviceResponse, Token } from '../types';
 
-export const x_app_id = 1355;
-export const x_sign_version = 2;
-export const x_sign_key = 'dd49a835-56e7-4a0f-95b5-efd51ea5397f';
-export const x_api_version = '3.0.66'; //   "x-api-version": "3.0.66",
-export const appBuild = 528;
-export const appVersion = '5.0.0';
+// TODO refactor
 
-export const pkgName = 'com.zhihu.android';
-export const bundleId = pkgName
+const x_app_id = 1355;
+const x_sign_version = 2;
+const x_sign_key = 'dd49a835-56e7-4a0f-95b5-efd51ea5397f';
+const x_api_version = '3.0.66'; //   "x-api-version": "3.0.66",
+const appBuild = 528;
+const appVersion = '5.0.0';
+const pkgName = 'com.zhihu.android';
+const bundleId = pkgName;
 
-export const regDevice = async () => {
 
+export async function regDevice(): Promise<Device> {
 
     // @Key(value="app_build") public String appBuild;
     // @Key(value="app_version") public String appVersion;
@@ -100,11 +102,11 @@ export const regDevice = async () => {
 
     const ts = '' + Math.floor(+new Date() / 1000);
 
-    const sign = HmacSHA1('' + x_app_id + x_sign_version + payload + ts, x_sign_key).toString();
+    const sign = await HmacSHA1('' + x_app_id + x_sign_version + payload + ts, x_sign_key);
 
 
     try {
-        let res = await fetch('https://appcloud.zhihu.com/v1/device', {
+        let res: DeviceResponse = await fetch('https://appcloud.zhihu.com/v1/device', {
 
             method: 'POST',
             headers: {
@@ -125,14 +127,14 @@ export const regDevice = async () => {
 
         return { sn: phoneSN, udid: res.udid, ua: ua };
     } catch (error) {
-        return { error: error };
+        return Promise.reject(error);
     }
 
 }
 
 
 
-export const regToken = async (data: any) => {
+export async function regToken(data: Device): Promise<Token> {
 
     try {
         const payload = `source=${pkgName}`;
@@ -143,12 +145,12 @@ export const regToken = async (data: any) => {
             'x-app-build': 'release',
             'x-network-type': 'WiFi',
             'x-udid': data.udid,
-            "x-app-za": `OS=Android&Release=7.1.2&Model=PIXEL+2+XL&VersionName=${appVersion}&VersionCode=${appBuild}&Width=1080&Height=1776&Installer=%E8%B1%8C%E8%B1%86%E8%8D%9A&WebView=44.0.2403.117`,
+            'x-app-za': `OS=Android&Release=7.1.2&Model=PIXEL+2+XL&VersionName=${appVersion}&VersionCode=${appBuild}&Width=1080&Height=1776&Installer=%E8%B1%8C%E8%B1%86%E8%8D%9A&WebView=44.0.2403.117`,
             'User-Agent': data.ua,
         };
-        let res = await fetch("https://api.zhihu.com/guests/token", {
+        let res: TokenResponse = await fetch('https://api.zhihu.com/guests/token', {
 
-            method: "POST",
+            method: 'POST',
             headers: {
                 ...headers,
                 'x-app-id': '' + x_app_id,
@@ -163,16 +165,14 @@ export const regToken = async (data: any) => {
 
         return {
             access_token: res.access_token,
-            // sn: data.sn,
-            // udid: data.udid,
-            // ua: data.ua,
+            device: data,
             headers: {
                 ...headers,
                 'Authorization': `Bearer ${res.access_token}`,
             },
         };
     } catch (error) {
-        return { error: error, data };
+        return Promise.reject(error);
     }
 
 }

@@ -1,0 +1,16 @@
+{
+	"name": "Node.js",
+	"image": "mcr.microsoft.com/devcontainers/javascript-node:0-18",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"dbaeumer.vscode-eslint"
+			]
+		}
+	},
+	"features": {},
+	"postCreateCommand": "bash .devcontainer/postCreateCommand.sh",
+	"containerEnv": {
+		"WRANGLER_SEND_METRICS": "false"
+	}
+}

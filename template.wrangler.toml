@@ -1,0 +1,15 @@
+name = "api2"
+main = "./src/index.ts"
+compatibility_date = "2022-05-03"
+workers_dev = true
+minify = true
+# node_compat = true
+send_metrics = false
+logpush = false
+kv_namespaces = [
+  { binding = "ZHIHUVVV", id = "CLOUDFLARE_KV_ID" }
+]
+
+
+[triggers]
+crons = ["0 */5 * * *"]
