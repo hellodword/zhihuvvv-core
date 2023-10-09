@@ -7,7 +7,7 @@ minify = true
 send_metrics = false
 logpush = false
 kv_namespaces = [
-  { binding = "ZHIHUVVV", id = "CLOUDFLARE_KV_ID" }
+  { binding = "CLOUDFLARE_KV_NAME", id = "CLOUDFLARE_KV_ID" }
 ]
 
 

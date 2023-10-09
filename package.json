@@ -3,8 +3,8 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"prepare-kv": "dotenv -e .env -- wrangler kv:namespace create ZHIHUVVV",
-		"prepare-config": "dotenv -e .env -- bash prepare.sh",
+		"prepare-kv": "dotenv -e .env -- bash prepare-kv.sh",
+		"prepare-config": "dotenv -e .env -- bash prepare-config.sh",
 		"deploy": "yarn run prepare-config && wrangler deploy src/index.ts",
 		"dev": "yarn run prepare-config && wrangler dev src/index.ts --local",
 		"test": "vitest run"

@@ -21,6 +21,89 @@ const defaultInternalServerError = () => {
 };
 
 
+const removeResponseHeaders = (response: Response): Response => {
+    if (!response) {
+        throw new Error('No fetch handler responded and no upstream to proxy to specified.');
+    }
+
+    const { headers, status, statusText, body } = response;
+
+    if (status === 101) return response; // bypass for protocol shifts
+
+    let newHeaders = new Headers();
+
+    for (const pair of headers.entries()) {
+
+        if (pair[0].toLowerCase().indexOf('content-') === 0
+            // https://en.wikipedia.org/wiki/List_of_HTTP_header_fields#Standard_response_fields
+            || [
+                'Accept-CH',
+                'Access-Control-Allow-Origin',
+                'Access-Control-Allow-Credentials',
+                'Access-Control-Expose-Headers',
+                'Access-Control-Max-Age',
+                'Access-Control-Allow-Methods',
+                'Access-Control-Allow-Headers',
+                'Accept-Patch',
+                'Accept-Ranges',
+                'Age',
+                'Allow',
+                'Alt-Svc',
+                'When',
+                'Cache-Control',
+                'Connection',
+                'Must',
+                'Content-Disposition',
+                'Content-Encoding',
+                'Content-Language',
+                'Content-Length',
+                'Content-Location',
+                'Content-MD',
+                'Content-Range',
+                'Content-Type',
+                'Date',
+                'Delta-Base',
+                // 'ETag',
+                'Expires',
+                'IM',
+                'Last-Modified',
+                'Link',
+                'Location',
+                'Pragma',
+                'Preference-Applied',
+                'Proxy-Authenticate',
+                'Public-Key-Pins',
+                'Retry-After',
+                'Permanent',
+                'Server',
+                // 'Set-Cookie',
+                'Strict-Transport-Security',
+                'Trailer',
+                'Transfer-Encoding',
+                'Must',
+                'Tk',
+                'Upgrade',
+                'Must',
+                'Vary',
+                'Via',
+                'Warning',
+                'WWW-Authenticate',
+                'X-Frame-Options'
+            ].findIndex(element => { return element.toLowerCase() === pair[0].toLowerCase(); }) !== -1) {
+
+            newHeaders.append(pair[0], pair[1]);
+
+        }
+    }
+
+    return new Response(body, {
+        status,
+        statusText,
+        headers: newHeaders,
+    })
+}
+
+
 const { preflight, corsify } = createCors({
     origins: ['*'],
 })
@@ -100,9 +183,9 @@ router
         url.host = 'api.zhihu.com';
         url.protocol = 'https:';
 
-        return corsify(await fetch(url.toString(), {
+        return corsify(removeResponseHeaders(await fetch(url.toString(), {
             headers: token.headers,
-        }));
+        })));
     });
 
 export default router.handle;
