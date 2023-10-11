@@ -1,4 +1,5 @@
 {
+	"$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/package.json",
 	"name": "zhihuvvv-core",
 	"version": "0.0.1",
 	"private": true,
