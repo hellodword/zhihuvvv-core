@@ -3,17 +3,17 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"prepare-kv": "dotenv -e .env -- bash prepare-kv.sh",
-		"prepare-config": "dotenv -e .env -- bash prepare-config.sh",
-		"deploy": "yarn run prepare-config && wrangler deploy src/index.ts",
-		"dev": "yarn run prepare-config && wrangler dev src/index.ts --local",
+		"prepare-kv": "dotenv -e .env -- bash scripts/prepare-kv.sh",
+		"prepare-config": "dotenv -e .env -- bash scripts/prepare-config.sh",
+		"deploy": "npm run prepare-config && dotenv -e .env -- bash scripts/deploy.sh",
+		"dev": "npm run prepare-config && wrangler dev src/index.ts --local --log-level debug",
 		"test": "vitest run"
 	},
 	"devDependencies": {
 		"@cloudflare/workers-types": "^4.20230518.0 ",
 		"dotenv-cli": "^7.3.0",
-		"vitest": "^0.31.0",
-		"wrangler": "^3.0.0"
+		"vitest": "^0.34.6",
+		"wrangler": "^3.11.0"
 	},
 	"dependencies": {
 		"http-status-codes": "^2.3.0",
